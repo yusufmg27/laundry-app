@@ -13,18 +13,26 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- Name -->
-                        <div>
-                            <x-input-label for="service_name" :value="__('Nama Layanan')" />
-                            <x-text-input id="service_name" class="block mt-1 w-full" type="text" name="service_name" :value="$service->service_name" required autofocus autocomplete="service_name" />
-                            <x-input-error :messages="$errors->get('service_name')" class="mt-2" />
-                        </div>
+                        <div class="p-6 text-gray-900 dark:text-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Kolom kiri -->
+                            <div class="md:flex md:flex-col">
+                                <!-- Name -->
+                                <div>
+                                    <x-input-label for="service_name" :value="__('Nama Layanan')" />
+                                    <x-text-input id="service_name" class="block mt-1 w-full" type="text" name="service_name" :value="$service->service_name" required autofocus autocomplete="service_name" />
+                                    <x-input-error :messages="$errors->get('service_name')" class="mt-2" />
+                                </div>
+                            </div>
 
-                        <!-- Email Address -->
-                        <div class="mt-4">
-                            <x-input-label for="price" :value="__('Harga')" />
-                            <x-text-input id="price" class="block mt-1 w-full" type="number" name="price" :value="$service->price" required autocomplete="price" />
-                            <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                            <!-- Kolom kanan -->
+                            <div class="md:flex md:flex-col">
+                                <!-- Email Address -->
+                                <div>
+                                    <x-input-label for="price" :value="__('Harga')" />
+                                    <x-text-input id="price" class="block mt-1 w-full" type="number" name="price" :value="$service->price" required autocomplete="price" />
+                                    <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex items-center justify-end mt-4">

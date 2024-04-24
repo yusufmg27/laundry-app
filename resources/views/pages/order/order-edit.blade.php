@@ -13,99 +13,108 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- order_code -->
-                        <div>
-                            <x-input-label for="order_code" :value="__('Kode Order')" />
-                            <x-text-input id="order_code" class="block mt-1 w-full" type="text" name="order_code" :value="$order->order_code" required autofocus autocomplete="order_code" readonly />
-                            <x-input-error :messages="$errors->get('order_code')" class="mt-2" />
-                        </div>
+                        <div class="p-6 text-gray-900 dark:text-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Kolom kiri -->
+                            <div class="md:flex md:flex-col">
+                                <!-- order_code -->
+                                <div>
+                                    <x-input-label for="order_code" :value="__('Kode Order')" />
+                                    <x-text-input id="order_code" class="block mt-1 w-full" type="text" name="order_code" :value="$order->order_code" required autofocus autocomplete="order_code" readonly />
+                                    <x-input-error :messages="$errors->get('order_code')" class="mt-2" />
+                                </div>
 
-                        <!-- customer_id -->
-                        <div class="mt-4">
-                            <x-input-label for="customer_id" :value="__('Id Konsumen')" />
-                            <x-text-input id="customer_id" class="block mt-1 w-full" type="text" name="customer_id" :value="$order->customer_id" required autofocus autocomplete="customer_id" readonly />
-                            <x-input-error :messages="$errors->get('customer_id')" class="mt-2" />
-                        </div>
+                                <!-- customer_id -->
+                                <div class="mt-4">
+                                    <x-input-label for="customer_id" :value="__('Id Konsumen')" />
+                                    <x-text-input id="customer_id" class="block mt-1 w-full" type="text" name="customer_id" :value="$order->customer_id" required autofocus autocomplete="customer_id" readonly />
+                                    <x-input-error :messages="$errors->get('customer_id')" class="mt-2" />
+                                </div>
 
-                        <!-- service_id -->
-                        <div class="mt-4">
-                            <x-input-label for="service_id" :value="__('Layanan')" />
-                            <select id="service_id" class="block mt-1 w-full rounded-md" name="service_id" required autofocus autocomplete="service_id">
-                                <!-- Opsi dropdown -->
-                                <option value="">Select Service</option>
-                                @foreach($services as $service)
-                                    <option value="{{ $service->id }}" @if($order->service_id == $service->id) selected @endif>{{ $service->service_name }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('service_id')" class="mt-2" />
-                        </div>
+                                <!-- service_id -->
+                                <div class="mt-4">
+                                    <x-input-label for="service_id" :value="__('Layanan')" />
+                                    <select id="service_id" class="block mt-1 w-full rounded-md" name="service_id" required autofocus autocomplete="service_id">
+                                        <!-- Opsi dropdown -->
+                                        <option value="">Select Service</option>
+                                        @foreach($services as $service)
+                                            <option value="{{ $service->id }}" @if($order->service_id == $service->id) selected @endif>{{ $service->service_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-input-error :messages="$errors->get('service_id')" class="mt-2" />
+                                </div>
 
-                        <!-- quantity -->
-                        <div class="mt-4">
-                            <x-input-label for="quantity" :value="__('Jumlah')" />
-                            <x-text-input id="quantity" class="block mt-1 w-full" type="number" name="quantity" :value="$order->quantity" required autofocus autocomplete="quantity" />
-                            <x-input-error :messages="$errors->get('quantity')" class="mt-2" />
-                        </div>
+                                <!-- quantity -->
+                                <div class="mt-4">
+                                    <x-input-label for="quantity" :value="__('Jumlah')" />
+                                    <x-text-input id="quantity" class="block mt-1 w-full" type="number" name="quantity" :value="$order->quantity" required autofocus autocomplete="quantity" />
+                                    <x-input-error :messages="$errors->get('quantity')" class="mt-2" />
+                                </div>
 
-                        <!-- total -->
-                        <div class="mt-4">
-                            <x-input-label for="total" :value="__('Total Harga')" />
-                            <x-text-input id="total" class="block mt-1 w-full" type="number" name="total" :value="$order->total" required autofocus autocomplete="total" readonly />
-                            <x-input-error :messages="$errors->get('total')" class="mt-2" />
-                        </div>
+                                <!-- payment_method -->
+                                <div class="mt-4">
+                                    <x-input-label for="payment_method" :value="__('Metode Pembayaran')" />
+                                    <select id="payment_method" class="block mt-1 w-full rounded-md" name="payment_method" required autofocus autocomplete="payment_method">
+                                        <!-- Opsi dropdown -->
+                                        <option value="">Pilih Metode Pembayaran</option>
+                                        @foreach($payments as $payment)
+                                            <option value="{{ $payment->id }}" @if($order->payment_method == $payment->id) selected @endif>{{ $payment->name }}</option>
+                                        @endforeach
+                                        <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
+                                    </select>
+                                    <x-input-error :messages="$errors->get('payment_method')" class="mt-2" />
+                                </div>
+                            </div>
+        
+                            <!-- Kolom kanan -->
+                            <div class="md:flex md:flex-col">
 
-                        <!-- payment_method -->
-                        <div class="mt-4">
-                            <x-input-label for="payment_method" :value="__('Metode Pembayaran')" />
-                            <select id="payment_method" class="block mt-1 w-full rounded-md" name="payment_method" required autofocus autocomplete="payment_method">
-                                <!-- Opsi dropdown -->
-                                <option value="">Pilih Metode Pembayaran</option>
-                                @foreach($payments as $payment)
-                                    <option value="{{ $payment->id }}" @if($order->payment_method == $payment->id) selected @endif>{{ $payment->name }}</option>
-                                @endforeach
-                                <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
-                            </select>
-                            <x-input-error :messages="$errors->get('payment_method')" class="mt-2" />
-                        </div>
+                                <!-- status -->
+                                <div>
+                                    <x-input-label for="status" :value="__('Status')" />
+                                    <select id="status" class="block mt-1 w-full rounded-md" name="status" required autofocus autocomplete="status">
+                                        <!-- Opsi dropdown -->
+                                        <option value="baru" @if($order->status == 'baru') selected @endif>Baru</option>
+                                        <option value="proses" @if($order->status == 'proses') selected @endif>Proses</option>
+                                        <option value="selesai" @if($order->status == 'selesai') selected @endif>Selesai</option>
+                                        <option value="diambil" @if($order->status == 'diambil') selected @endif>Diambil</option>
+                                        <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
+                                    </select>
+                                    <x-input-error :messages="$errors->get('status')" class="mt-2" />
+                                </div>
 
-                        <!-- status -->
-                        <div class="mt-4">
-                            <x-input-label for="status" :value="__('Status')" />
-                            <select id="status" class="block mt-1 w-full rounded-md" name="status" required autofocus autocomplete="status">
-                                <!-- Opsi dropdown -->
-                                <option value="baru" @if($order->status == 'baru') selected @endif>Baru</option>
-                                <option value="proses" @if($order->status == 'proses') selected @endif>Proses</option>
-                                <option value="selesai" @if($order->status == 'selesai') selected @endif>Selesai</option>
-                                <option value="diambil" @if($order->status == 'diambil') selected @endif>Diambil</option>
-                                <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
-                            </select>
-                            <x-input-error :messages="$errors->get('status')" class="mt-2" />
-                        </div>
+                                <!-- payment_status -->
+                                <div class="mt-4">
+                                    <x-input-label for="payment_status" :value="__('Status Pembayaran')" />
+                                    <select id="payment_status" class="block mt-1 w-full rounded-md" name="payment_status" required autofocus autocomplete="payment_status">
+                                        <!-- Opsi dropdown -->
+                                        <option value="belum_lunas" @if($order->payment_status == 'belum_lunas') selected @endif>Belum Lunas</option>
+                                        <option value="lunas" @if($order->payment_status == 'lunas') selected @endif>Lunas</option>
+                                        <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
+                                    </select>
+                                    <x-input-error :messages="$errors->get('payment_status')" class="mt-2" />
+                                </div>
 
-                        <!-- payment_status -->
-                        <div class="mt-4">
-                            <x-input-label for="payment_status" :value="__('Status Pembayaran')" />
-                            <select id="payment_status" class="block mt-1 w-full rounded-md" name="payment_status" required autofocus autocomplete="payment_status">
-                                <!-- Opsi dropdown -->
-                                <option value="belum_lunas" @if($order->payment_status == 'belum_lunas') selected @endif>Belum Lunas</option>
-                                <option value="lunas" @if($order->payment_status == 'lunas') selected @endif>Lunas</option>
-                                <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
-                            </select>
-                            <x-input-error :messages="$errors->get('payment_status')" class="mt-2" />
-                        </div>
+                                <!-- total -->
+                                <div class="mt-4">
+                                    <x-input-label for="total" :value="__('Total Harga')" />
+                                    <x-text-input id="total" class="block mt-1 w-full" type="number" name="total" :value="$order->total" required autofocus autocomplete="total" readonly />
+                                    <x-input-error :messages="$errors->get('total')" class="mt-2" />
+                                </div>
 
-                        <!-- payment -->
-                        <div class="mt-4">
-                            <x-input-label for="payment" :value="__('Uang Bayar')" />
-                            <x-text-input id="payment" class="block mt-1 w-full" type="number" name="payment" :value="$order->payment" required autofocus autocomplete="payment" />
-                            <x-input-error :messages="$errors->get('payment')" class="mt-2" />
-                        </div>
+                                <!-- payment -->
+                                <div class="mt-4">
+                                    <x-input-label for="payment" :value="__('Uang Bayar')" />
+                                    <x-text-input id="payment" class="block mt-1 w-full" type="number" name="payment" :value="$order->payment" required autofocus autocomplete="payment" />
+                                    <x-input-error :messages="$errors->get('payment')" class="mt-2" />
+                                </div>
 
-                        <!-- change -->
-                        <div class="mt-4">
-                            <x-input-label for="change" :value="__('Kembalian')" />
-                            <x-text-input id="change" class="block mt-1 w-full" type="number" name="change" :value="$order->change" required autofocus autocomplete="change" readonly />
-                            <x-input-error :messages="$errors->get('change')" class="mt-2" />
+                                <!-- change -->
+                                <div class="mt-4">
+                                    <x-input-label for="change" :value="__('Kembalian')" />
+                                    <x-text-input id="change" class="block mt-1 w-full" type="number" name="change" :value="$order->change" required autofocus autocomplete="change" readonly />
+                                    <x-input-error :messages="$errors->get('change')" class="mt-2" />
+                                </div>
+                            </div>
                         </div>
                 
                         <div class="flex items-center justify-end mt-4">
