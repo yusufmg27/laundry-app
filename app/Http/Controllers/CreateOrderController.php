@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use DataTables; // tambahkan ini
+use Dompdf\Dompdf;
 
 class CreateOrderController extends Controller
 {
@@ -28,7 +29,7 @@ class CreateOrderController extends Controller
             return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
-                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a>';
+                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a> <a href="'.route('order.print', $row->id).'" class="btn btn-secondary btn-sm">Print</a>';
                 return $actionBtn;
             })                
             ->rawColumns(['action'])
@@ -59,7 +60,7 @@ class CreateOrderController extends Controller
         
         return view('pages.order.order-edit', compact('order', 'customer', 'services', 'payments'));
     }
-
+    
     
     public function destroy(Request $request)
     {
@@ -78,7 +79,7 @@ class CreateOrderController extends Controller
     {
         $request->validate([
             'order_code' => ['required', 'string', 'max:255'],
-            'quantity' => ['required', 'numeric', 'min:1'],
+            'quantity' => ['required', 'numeric', 'min:1', 'max:10'],
             'name' => ['required', 'string', 'max:255'], // Validasi nama pelanggan
             'number' => ['required', 'string', 'max:255'], // Validasi nomor pelanggan
             'address' => ['required', 'string', 'max:255'], // Validasi alamat pelanggan
@@ -91,13 +92,13 @@ class CreateOrderController extends Controller
             'change' => ['required', 'numeric', 'min:0'], 
             'total' => ['required', 'numeric', 'min:0'], 
         ]);
-    
+        
         // Temukan atau buat pelanggan berdasarkan nomor telepon yang diberikan
         $customer = Customer::firstOrCreate(
             ['number' => $request->number],
             ['name' => $request->name, 'address' => $request->address]
         );
-    
+        
         // Simpan ID pelanggan
         $customerId = $customer->id;
         
@@ -114,7 +115,7 @@ class CreateOrderController extends Controller
             'change' => $request->change,
             'total' => $request->total,
         ]);
-                
+        
         return redirect(route('order.index', absolute: false));
     }
     
@@ -123,7 +124,7 @@ class CreateOrderController extends Controller
     {
         $request->validate([
             'order_code' => ['required', 'string', 'max:255'],
-            'quantity' => ['required', 'numeric', 'min:1'],
+            'quantity' => ['required', 'numeric', 'min:1', 'max:10'],
             'customer_id' => ['required', 'string', 'max:255'],
             'service_id' => ['required', 'string'], 
             'payment_method' => ['required', 'string'], 
@@ -146,9 +147,25 @@ class CreateOrderController extends Controller
         $user->change = $request->change;
         $user->total = $request->total;
         $user->save();
-
+        
         
         return redirect()->route('order.index')->with('success', 'User updated successfully.');
         dd($request->all());
     }
+    
+    public function printReceipt($id)
+    {
+        $order = Order::findOrFail($id);
+    
+        $dompdf = new Dompdf();
+    
+        $dompdf->loadHtml(view('pages.order.receipt', compact('order')));
+    
+        // Render PDF
+        $dompdf->render();
+    
+        // Kembalikan PDF kepada pengguna
+        return $dompdf->stream('receipt_'.$order->order_code.'.pdf');
+    }
+    
 }

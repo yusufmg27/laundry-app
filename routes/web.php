@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::get('order/edit', [CreateOrderController::class, 'edit'])->name('order.edit');
         Route::put('/order/{id}', [CreateOrderController::class, 'update'])->name('order.update');
         Route::delete('/order/destroy', [CreateOrderController::class, 'destroy'])->name('order.destroy');
+        Route::get('order/print/{id}', [CreateOrderController::class, 'printReceipt'])->name('order.print');
 
     });
 

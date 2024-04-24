@@ -32,7 +32,7 @@
                                     <th>Status Pembayaran</th>
                                     <th>Status Laundry</th>
                                     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
-                                    <th style="width: 150px" >Action</th>
+                                    <th style="width: 200px" >Action</th>
                                     @endif
                                 </tr>
                             </thead>
