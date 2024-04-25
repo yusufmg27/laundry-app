@@ -3,6 +3,11 @@
         display: flex;
         justify-content: flex-end;
     }
+
+    table {
+            margin: 0 auto; /* Menengahkan tabel secara horizontal */
+            text-align: center; /* Menengahkan isi tabel secara horizontal */
+        }
 </style>
 <x-app-layout>
     <x-slot name="header">

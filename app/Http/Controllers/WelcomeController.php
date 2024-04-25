@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Service;
+use App\Models\Customer;
 use DataTables; // tambahkan ini
 
 
@@ -17,13 +19,23 @@ class WelcomeController extends Controller
         if(\request()->ajax()){
             $data = Order::latest()->get();
             return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a>';
-                return $actionBtn;
-            })                
-            ->rawColumns(['action'])
-            ->make(true);
+                ->addIndexColumn()
+                ->addColumn('customer_id', function($row) {
+                    // Mengambil informasi nama pelanggan berdasarkan customer_id pada setiap order
+                    $customer = Customer::find($row->customer_id);
+                    return $customer ? $customer->name : 'N/A';
+                })
+                ->addColumn('service_id', function($row) {
+                    // Mengambil informasi nama layanan berdasarkan service_id pada setiap order
+                    $service = Service::find($row->service_id);
+                    return $service ? $service->service_name : 'N/A';
+                })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a> <a href="'.route('order.print', $row->id).'" class="btn btn-secondary btn-sm">Print</a>';
+                    return $actionBtn;
+                })                
+                ->rawColumns(['action'])
+                ->make(true);
         }
         
         return view('welcome');

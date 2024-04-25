@@ -27,22 +27,33 @@ class CreateOrderController extends Controller
         if(\request()->ajax()){
             $data = Order::latest()->get();
             return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a> <a href="'.route('order.print', $row->id).'" class="btn btn-secondary btn-sm">Print</a>';
-                return $actionBtn;
-            })                
-            ->rawColumns(['action'])
-            ->make(true);
+                ->addIndexColumn()
+                ->addColumn('customer_id', function($row) {
+                    // Mengambil informasi nama pelanggan berdasarkan customer_id pada setiap order
+                    $customer = Customer::find($row->customer_id);
+                    return $customer ? $customer->name : 'N/A';
+                })
+                ->addColumn('service_id', function($row) {
+                    // Mengambil informasi nama layanan berdasarkan service_id pada setiap order
+                    $service = Service::find($row->service_id);
+                    return $service ? $service->service_name : 'N/A';
+                })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm" data-id="' . $row->id . '">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a> <a href="'.route('order.print', $row->id).'" class="btn btn-secondary btn-sm">Print</a>';
+                    return $actionBtn;
+                })                
+                ->rawColumns(['action'])
+                ->make(true);
         }
         
         return view('pages.order.order');
     }
     
+    
     public function create(): View
     {
         $latestOrder = Order::latest()->first();
-        $orderCode = $latestOrder ? 'LNDRY' . (intval(substr($latestOrder->order_code, 5)) + 1) : 'LNDRY1';
+        $orderCode = $latestOrder ? 'LNDRY-' . (intval(substr($latestOrder->order_code, 6)) + 1) : 'LNDRY-1';
         $services = Service::all();
         $payments = PaymentMethod::all();
         return view('pages.order.order-create', compact('orderCode', 'services', 'payments'));

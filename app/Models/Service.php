@@ -17,5 +17,15 @@ class Service extends Model
     protected $fillable = [
         'service_name',
         'price',
+        'units',
     ];
+       /**
+     * Define the relationship with Order.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

@@ -21,15 +21,21 @@
                                     <x-text-input id="service_name" class="block mt-1 w-full" type="text" name="service_name" :value="old('service_name')" required autofocus autocomplete="service_name" />
                                     <x-input-error :messages="$errors->get('service_name')" class="mt-2" />
                                 </div>
+                                <!-- price -->
+                                <div class="mt-4"> 
+                                    <x-input-label for="price" :value="__('Harga')" />
+                                    <x-text-input id="price" class="block mt-1 w-full" type="number" name="price" :value="old('price')" required autocomplete="price" />
+                                    <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                                </div>
                             </div>
 
                             <!-- Kolom kanan -->
                             <div class="md:flex md:flex-col">
-                                <!-- price -->
+                                <!-- units -->
                                 <div>
-                                    <x-input-label for="price" :value="__('Harga')" />
-                                    <x-text-input id="price" class="block mt-1 w-full" type="number" name="price" :value="old('price')" required autocomplete="username" />
-                                    <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                                    <x-input-label for="units" :value="__('Satuan')" />
+                                    <x-text-input id="units" class="block mt-1 w-full" type="text" name="units" :value="old('units')" required autocomplete="units" />
+                                    <x-input-error :messages="$errors->get('units')" class="mt-2" />
                                 </div>
                             </div>
                         </div>

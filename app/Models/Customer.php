@@ -19,4 +19,13 @@ class Customer extends Model
         'address',
         'number',
     ];
+       /**
+     * Define the relationship with Order.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

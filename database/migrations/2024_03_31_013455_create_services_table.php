@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('service_name');
             $table->string('price');
+            $table->string('units');
             $table->timestamps();
         });
     }

@@ -64,12 +64,14 @@ class CreateServiceController extends Controller
     {
         $request->validate([
             'service_name' => ['required', 'string', 'max:255'],
-            'price' => ['required'],
+            'price' => ['required', 'numeric'],
+            'units' => ['required', 'string'],
         ]);
         
         $user = Service::create([
             'service_name' => $request->service_name,
             'price' => $request->price,
+            'units' => $request->units,
         ]);
                 
         return redirect(route('service.index', absolute: false));
@@ -79,12 +81,14 @@ class CreateServiceController extends Controller
     {
         $request->validate([
             'service_name' => ['required', 'string', 'max:255'],
-            'price' => ['required'],
+            'price' => ['required', 'numeric'],
+            'units' => ['required', 'string'],
         ]);
         
         $user = Service::findOrFail($id);
         $user->service_name = $request->service_name;
         $user->price = $request->price;
+        $user->units = $request->units;
         $user->save();
         
         return redirect()->route('service.index')->with('success', 'User updated successfully.');

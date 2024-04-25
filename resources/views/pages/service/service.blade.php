@@ -3,6 +3,11 @@
         display: flex;
         justify-content: flex-end;
     }
+
+    table {
+            margin: 0 auto; /* Menengahkan tabel secara horizontal */
+            text-align: center; /* Menengahkan isi tabel secara horizontal */
+        }
 </style>
 <x-app-layout>
     <x-slot name="header">
@@ -26,6 +31,7 @@
                                     <th>No</th>
                                     <th>Nama Layanan</th>
                                     <th>Harga</th>
+                                    <th>Satuan</th>
                                     <th style="width: 150px" >Action</th>
                                 </tr>
                             </thead>
@@ -54,6 +60,7 @@
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'service_name', name: 'service_name'},
                 {data: 'price', name: 'price'},
+                {data: 'units', name: 'units'},
                 {data: 'action', name: 'action'},
                 ]
             });

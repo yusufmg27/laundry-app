@@ -25,8 +25,9 @@
 
                                 <!-- customer_id -->
                                 <div class="mt-4">
-                                    <x-input-label for="customer_id" :value="__('Id Konsumen')" />
-                                    <x-text-input id="customer_id" class="block mt-1 w-full" type="text" name="customer_id" :value="$order->customer_id" required autofocus autocomplete="customer_id" readonly />
+                                    <x-input-label for="customer_id" :value="__('Nama Konsumen')" />
+                                    <x-text-input id="customer_id" class="block mt-1 w-full" type="hidden" name="customer_id" :value="$order->customer->id" required autofocus autocomplete="customer_id" />
+                                    <x-text-input class="block mt-1 w-full" type="text" :value="$order->customer->name" required autofocus readonly />
                                     <x-input-error :messages="$errors->get('customer_id')" class="mt-2" />
                                 </div>
 
@@ -136,6 +137,8 @@
         // Event listener ketika layanan dipilih
         document.getElementById('service_id').addEventListener('change', function() {
             updateTotalPrice(); // Memanggil fungsi untuk memperbarui total harga setiap kali layanan diubah
+            updateQuantityLabel(); // Memanggil fungsi untuk memperbarui label quantity dengan unit yang sesuai
+            updatePaymentStatusOption(); // Memanggil fungsi untuk memperbarui opsi pembayaran
         });
     
         // Event listener ketika quantity diubah
@@ -143,16 +146,22 @@
             updateTotalPrice(); // Memanggil fungsi untuk memperbarui total harga setiap kali quantity diubah
         });
     
+        // Event listener ketika nilai pembayaran diubah
+        document.getElementById('payment').addEventListener('input', function() {
+            updatePaymentStatusOption(); // Memanggil fungsi untuk memperbarui opsi pembayaran
+            updateChange(); // Memanggil fungsi untuk memperbarui kembalian
+        });
+    
         // Fungsi untuk memperbarui total harga berdasarkan layanan dan quantity yang dipilih
         function updateTotalPrice() {
-            var selectedService = document.getElementById('service_id').value;
+            var selectedServiceId = document.getElementById('service_id').value;
             var quantity = parseInt(document.getElementById('quantity').value);
             var serviceOptions = <?php echo json_encode($services); ?>;
             var totalPrice = 0;
     
             // Cari layanan yang dipilih dalam daftar layanan
             for(var i = 0; i < serviceOptions.length; i++) {
-                if(serviceOptions[i].id == selectedService) {
+                if(serviceOptions[i].id == selectedServiceId) {
                     // Hitung total harga berdasarkan harga layanan dan quantity
                     totalPrice = serviceOptions[i].price * quantity;
                     break;
@@ -163,17 +172,53 @@
             document.getElementById('total').value = totalPrice;
         }
     
-        // Event listener ketika nilai pembayaran diubah
-        document.getElementById('payment').addEventListener('input', function() {
-            // Ambil nilai pembayaran dan total harga
-            var payment = parseFloat(this.value);
+        // Fungsi untuk memperbarui label quantity dengan unit yang sesuai dari layanan yang dipilih
+        function updateQuantityLabel() {
+            var selectedServiceId = document.getElementById('service_id').value;
+            var serviceOptions = <?php echo json_encode($services); ?>;
+            var quantityLabel = "";
+    
+            // Cari layanan yang dipilih dalam daftar layanan
+            for(var i = 0; i < serviceOptions.length; i++) {
+                if(serviceOptions[i].id == selectedServiceId) {
+                    // Dapatkan unit layanan yang dipilih
+                    quantityLabel = "Jumlah (" + serviceOptions[i].units + ")";
+                    break;
+                }
+            }
+    
+            // Isi teks label quantity dengan unit yang sesuai
+            document.querySelector('[for="quantity"]').innerText = quantityLabel;
+        }
+    
+        // Fungsi untuk memperbarui opsi pembayaran berdasarkan kondisi
+        function updatePaymentStatusOption() {
+            var selectedServiceId = document.getElementById('service_id').value;
+            var paymentInput = document.getElementById('payment').value;
             var totalPrice = parseFloat(document.getElementById('total').value);
     
-            // Hitung kembalian
+            // Jika belum memilih layanan atau belum mengisi pembayaran, hilangkan opsi "Lunas"
+            if (!selectedServiceId || !paymentInput || parseFloat(paymentInput) < totalPrice) {
+                document.getElementById('payment_status').innerHTML = '<option value="">Pilih Status Pembayaran</option><option value="belum_lunas">Belum Lunas</option>';
+            } else {
+                // Jika uang bayar mencukupi total harga, tampilkan opsi "Lunas"
+                document.getElementById('payment_status').innerHTML = '<option value="lunas">Lunas</option>';
+            }
+        }
+    
+        // Fungsi untuk memperbarui kembalian
+        function updateChange() {
+            var payment = parseFloat(document.getElementById('payment').value);
+            var totalPrice = parseFloat(document.getElementById('total').value);
             var change = payment - totalPrice;
+    
+            // Jika kembalian negatif, atur kembali menjadi 0
+            if (change < 0) {
+                change = 0;
+            }
     
             // Isi nilai kembalian di field change
             document.getElementById('change').value = change.toFixed(2); // Menggunakan toFixed untuk membatasi desimal menjadi 2 digit
-        });
+        }
     </script>
 </x-app-layout>
