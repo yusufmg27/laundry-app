@@ -16,6 +16,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use DataTables; // tambahkan ini
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class CreateOrderController extends Controller
 {
@@ -168,9 +169,16 @@ class CreateOrderController extends Controller
     {
         $order = Order::findOrFail($id);
     
-        $dompdf = new Dompdf();
+        // Inisialisasi Dompdf dengan opsi
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
     
+        $dompdf = new Dompdf($options);
+    
+        // Muat HTML dari view dan atur ukuran kertas dan margin
         $dompdf->loadHtml(view('pages.order.receipt', compact('order')));
+        $dompdf->setPaper('A7', 'portrait'); // Atur ukuran kertas menjadi A7 (ukuran struk) dan orientasi menjadi potrait
     
         // Render PDF
         $dompdf->render();
@@ -178,5 +186,34 @@ class CreateOrderController extends Controller
         // Kembalikan PDF kepada pengguna
         return $dompdf->stream('receipt_'.$order->order_code.'.pdf');
     }
+
+    public function exportPdf()
+    {
+        // Ambil data order bulanan
+        $orders = Order::whereYear('created_at', '=', date('Y'))
+                    ->whereMonth('created_at', '=', date('m'))
+                    ->get();
+    
+        // Mendapatkan nilai bulan dan tahun saat ini
+        $month = date('F');
+        $year = date('Y');
+    
+        // Inisialisasi Dompdf dengan opsi
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+    
+        $dompdf = new Dompdf($options);
+    
+        // Muat HTML dari view dan atur ukuran kertas dan margin
+        $dompdf->loadHtml(view('pages.order.monthly-order-pdf', compact('orders', 'month', 'year')));
+        $dompdf->setPaper('A4', 'potrait'); // Atur ukuran kertas menjadi A4 (landscape)
+    
+        // Render PDF
+        $dompdf->render();
+    
+        // Kembalikan PDF kepada pengguna
+        return $dompdf->stream('laporan_bulan_' . $month . '.pdf');
+    }    
     
 }

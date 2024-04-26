@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/order/{id}', [CreateOrderController::class, 'update'])->name('order.update');
         Route::delete('/order/destroy', [CreateOrderController::class, 'destroy'])->name('order.destroy');
         Route::get('order/print/{id}', [CreateOrderController::class, 'printReceipt'])->name('order.print');
+        Route::get('/order/export/pdf', [CreateOrderController::class, 'exportPdf'])->name('order.export.pdf');
 
     });
 

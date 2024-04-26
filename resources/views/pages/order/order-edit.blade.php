@@ -35,11 +35,18 @@
                                 <div class="mt-4">
                                     <x-input-label for="service_id" :value="__('Layanan')" />
                                     <select id="service_id" class="block mt-1 w-full rounded-md" name="service_id" required autofocus autocomplete="service_id">
-                                        <!-- Opsi dropdown -->
-                                        <option value="">Select Service</option>
-                                        @foreach($services as $service)
+                                        
+                                    @if(auth()->user()->role == 'petugas')
+                                            @foreach($services as $service)
+                                            @if($order->service_id == $service->id)
+                                                <option value="{{ $service->id }}" selected>{{ $service->service_name }}</option>
+                                            @endif
+                                            @endforeach
+                                    @else
+                                            @foreach($services as $service)
                                             <option value="{{ $service->id }}" @if($order->service_id == $service->id) selected @endif>{{ $service->service_name }}</option>
-                                        @endforeach
+                                            @endforeach                                    
+                                    @endif
                                     </select>
                                     <x-input-error :messages="$errors->get('service_id')" class="mt-2" />
                                 </div>
@@ -47,7 +54,11 @@
                                 <!-- quantity -->
                                 <div class="mt-4">
                                     <x-input-label for="quantity" :value="__('Jumlah')" />
-                                    <x-text-input id="quantity" class="block mt-1 w-full" type="number" name="quantity" :value="$order->quantity" required autofocus autocomplete="quantity" />
+                                        @if(auth()->user()->role == 'petugas')
+                                            <x-text-input id="quantity" class="block mt-1 w-full" type="number" name="quantity" :value="$order->quantity" required autofocus autocomplete="quantity" readonly />
+                                        @else
+                                            <x-text-input id="quantity" class="block mt-1 w-full" type="number" name="quantity" :value="$order->quantity" required autofocus autocomplete="quantity" />
+                                        @endif
                                     <x-input-error :messages="$errors->get('quantity')" class="mt-2" />
                                 </div>
 
@@ -56,7 +67,6 @@
                                     <x-input-label for="payment_method" :value="__('Metode Pembayaran')" />
                                     <select id="payment_method" class="block mt-1 w-full rounded-md" name="payment_method" required autofocus autocomplete="payment_method">
                                         <!-- Opsi dropdown -->
-                                        <option value="">Pilih Metode Pembayaran</option>
                                         @foreach($payments as $payment)
                                             <option value="{{ $payment->id }}" @if($order->payment_method == $payment->id) selected @endif>{{ $payment->name }}</option>
                                         @endforeach
@@ -73,12 +83,20 @@
                                 <div>
                                     <x-input-label for="status" :value="__('Status')" />
                                     <select id="status" class="block mt-1 w-full rounded-md" name="status" required autofocus autocomplete="status">
-                                        <!-- Opsi dropdown -->
-                                        <option value="baru" @if($order->status == 'baru') selected @endif>Baru</option>
-                                        <option value="proses" @if($order->status == 'proses') selected @endif>Proses</option>
-                                        <option value="selesai" @if($order->status == 'selesai') selected @endif>Selesai</option>
-                                        <option value="diambil" @if($order->status == 'diambil') selected @endif>Diambil</option>
-                                        <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
+                                    <!-- Opsi dropdown -->
+                                    @if(auth()->user()->role == 'petugas')
+                                    @if($order->status != 'diambil')
+                                    <option value="baru" @if($order->status == 'baru') selected @endif>Baru</option>
+                                    <option value="proses" @if($order->status == 'proses') selected @endif>Proses</option>
+                                    <option value="selesai" @if($order->status == 'selesai') selected @endif>Selesai</option>
+                                    @endif
+                                    <option value="diambil" @if($order->status == 'diambil') selected @endif>Diambil</option>
+                                    @else
+                                    <option value="baru" @if($order->status == 'baru') selected @endif>Baru</option>
+                                    <option value="proses" @if($order->status == 'proses') selected @endif>Proses</option>
+                                    <option value="selesai" @if($order->status == 'selesai') selected @endif>Selesai</option>
+                                    <option value="diambil" @if($order->status == 'diambil') selected @endif>Diambil</option>
+                                    @endif
                                     </select>
                                     <x-input-error :messages="$errors->get('status')" class="mt-2" />
                                 </div>
@@ -88,9 +106,11 @@
                                     <x-input-label for="payment_status" :value="__('Status Pembayaran')" />
                                     <select id="payment_status" class="block mt-1 w-full rounded-md" name="payment_status" required autofocus autocomplete="payment_status">
                                         <!-- Opsi dropdown -->
-                                        <option value="belum_lunas" @if($order->payment_status == 'belum_lunas') selected @endif>Belum Lunas</option>
-                                        <option value="lunas" @if($order->payment_status == 'lunas') selected @endif>Lunas</option>
-                                        <!-- Tambahkan opsi lain sesuai kebutuhan Anda -->
+                                        @if($order->payment_status == 'belum_lunas')
+                                            <option value="belum_lunas" selected>Belum Lunas</option>
+                                        @elseif($order->payment_status == 'lunas')
+                                            <option value="lunas" selected>Lunas</option>
+                                        @endif
                                     </select>
                                     <x-input-error :messages="$errors->get('payment_status')" class="mt-2" />
                                 </div>
@@ -199,7 +219,7 @@
     
             // Jika belum memilih layanan atau belum mengisi pembayaran, hilangkan opsi "Lunas"
             if (!selectedServiceId || !paymentInput || parseFloat(paymentInput) < totalPrice) {
-                document.getElementById('payment_status').innerHTML = '<option value="">Pilih Status Pembayaran</option><option value="belum_lunas">Belum Lunas</option>';
+                document.getElementById('payment_status').innerHTML = '<option value="belum_lunas">Belum Lunas</option>';
             } else {
                 // Jika uang bayar mencukupi total harga, tampilkan opsi "Lunas"
                 document.getElementById('payment_status').innerHTML = '<option value="lunas">Lunas</option>';

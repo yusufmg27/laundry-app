@@ -216,7 +216,7 @@
 
         // Jika belum memilih layanan atau belum mengisi pembayaran, hilangkan opsi "Lunas"
         if (!selectedServiceId || !paymentInput || parseFloat(paymentInput) < totalPrice) {
-            document.getElementById('payment_status').innerHTML = '<option value="">Pilih Status Pembayaran</option><option value="belum_lunas">Belum Lunas</option>';
+            document.getElementById('payment_status').innerHTML = '<option value="belum_lunas">Belum Lunas</option>';
         } else {
             // Jika uang bayar mencukupi total harga, tampilkan opsi "Lunas"
             document.getElementById('payment_status').innerHTML = '<option value="lunas">Lunas</option>';

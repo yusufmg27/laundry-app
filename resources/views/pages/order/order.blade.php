@@ -19,11 +19,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="p-6 flex justify-between items-center text-gray-900 dark:text-gray-100">
                     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
                     <a href="{{ route('create.order') }}" class="btn btn-primary text-white font-bold px-4 rounded mt-2">Buat Order</a>
                     @endif
-                </div>
+                    <div>
+                        <a href="{{ route('order.export.pdf') }}" class="btn btn-danger text-white font-bold px-4 rounded mt-2">Export Laporan</a>
+                    </div>
+                </div>                
                 <div class="table-responsive">
                     <div class="container mt-1 mb-4">
                         <table id="myTable" class="table table-bordered">
