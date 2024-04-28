@@ -54,57 +54,70 @@
                 deferLoading: 0, // Menunda pemuatan data hingga setelah pencarian pertama kali dilakukan
                 ajax: "{{ route('welcome.index') }}",
                 columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'order_code', name: 'order_code'},
-                {data: 'quantity', name: 'quantity'},
-                {data: 'customer_id', name: 'customer_id'},
-                {data: 'service_id', name: 'service_id'},
-                {data: 'payment_status', name: 'payment_status', render: function (data) {
-                    var badgeColor = '';
-                    var statusText = capitalizeAndReplace(data);
-                    
-                    // Menentukan warna badge berdasarkan status pembayaran
-                    switch(data) {
-                        case 'lunas':
-                            badgeColor = 'bg-success';
-                            break;
-                        case 'belum_lunas':
-                            badgeColor = 'bg-danger';
-                            break;
-                        default:
-                            badgeColor = 'bg-primary';
-                    }
-                    
-                    // Mengembalikan badge dengan warna dan teks yang sesuai
-                    return '<span class="badge ' + badgeColor + '">' + statusText + '</span>';
-                }},
-                {data: 'status', name: 'status', render: function (data) {
-                    var badgeColor = '';
-                    var statusText = capitalizeAndReplace(data);
-                    
-                    // Menentukan warna badge berdasarkan status laundry
-                    switch(data) {
-                        case 'baru':
-                            badgeColor = 'bg-danger';
-                            break;
-                        case 'proses':
-                            badgeColor = 'bg-warning';
-                            break;
-                        case 'selesai':
-                            badgeColor = 'bg-success';
-                            break;
-                        case 'diambil':
-                            badgeColor = 'bg-secondary';
-                            break;
-                        default:
-                            badgeColor = 'bg-primary';
-                    }
-                    
-                    // Mengembalikan badge dengan warna dan teks yang sesuai
-                    return '<span class="badge ' + badgeColor + '">' + statusText + '</span>';
-                }},
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                    {data: 'order_code', name: 'order_code'},
+                    {data: 'quantity', name: 'quantity'},
+                    {data: 'customer_id', name: 'customer_id'},
+                    {data: 'service_id', name: 'service_id'},
+                    {data: 'payment_status', name: 'payment_status', render: function (data) {
+                        var badgeColor = '';
+                        var statusText = capitalizeAndReplace(data);
+                        
+                        // Menentukan warna badge berdasarkan status pembayaran
+                        switch(data) {
+                            case 'lunas':
+                                badgeColor = 'bg-success';
+                                break;
+                            case 'belum_lunas':
+                                badgeColor = 'bg-danger';
+                                break;
+                            default:
+                                badgeColor = 'bg-primary';
+                        }
+                        
+                        // Mengembalikan badge dengan warna dan teks yang sesuai
+                        return '<span class="badge ' + badgeColor + '">' + statusText + '</span>';
+                    }},
+                    {data: 'status', name: 'status', render: function (data) {
+                        var badgeColor = '';
+                        var statusText = capitalizeAndReplace(data);
+                        
+                        // Menentukan warna badge berdasarkan status laundry
+                        switch(data) {
+                            case 'baru':
+                                badgeColor = 'bg-danger';
+                                break;
+                            case 'proses':
+                                badgeColor = 'bg-warning';
+                                break;
+                            case 'selesai':
+                                badgeColor = 'bg-success';
+                                break;
+                            case 'diambil':
+                                badgeColor = 'bg-secondary';
+                                break;
+                            default:
+                                badgeColor = 'bg-primary';
+                        }
+                        
+                        // Mengembalikan badge dengan warna dan teks yang sesuai
+                        return '<span class="badge ' + badgeColor + '">' + statusText + '</span>';
+                    }},
                 ]
             });
+    
+            $('#myTable_filter input').attr('placeholder', 'Cari berdasarkan kode order (LNDRY-XX)');
+
+            // Memfilter input pencarian
+            $('#myTable_filter input').unbind().bind('input', function () {
+                var searchText = this.value.trim();
+    
+                // Hanya memicu pencarian jika input berisi LNDRY-(angka)
+                if (/LNDRY-\d+/.test(searchText)) {
+                    table.search(searchText).draw();
+                }
+            });
+    
             function capitalizeAndReplace(str) {
                 // Mengganti tanda _ menjadi spasi dan mengkapitalisasi huruf awal
                 return str.replace(/_/g, ' ').replace(/\b\w/g, function (char) {
@@ -112,6 +125,6 @@
                 });
             }
         });
-        
     </script>
+    
 </x-app-layout>
