@@ -46,8 +46,10 @@ class CreateOrderController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+        $month = date('m'); // Default to current month
+        $year = date('Y'); // Default to current year
         
-        return view('pages.order.order');
+        return view('pages.order.order', compact('month', 'year'));
     }
     
     
@@ -183,37 +185,83 @@ class CreateOrderController extends Controller
         // Render PDF
         $dompdf->render();
     
-        // Kembalikan PDF kepada pengguna
-        return $dompdf->stream('receipt_'.$order->order_code.'.pdf');
+        // Ambil konten PDF dalam bentuk string
+        $pdfContent = $dompdf->output();
+    
+        // Kembalikan PDF sebagai respons HTTP
+        return response($pdfContent)
+                    ->header('Content-Type', 'application/pdf')
+                    ->header('Content-Disposition', 'inline; filename="receipt_'.$order->order_code.'.pdf"');
     }
+    
 
-    public function exportPdf()
-    {
-        // Ambil data order bulanan
-        $orders = Order::whereYear('created_at', '=', date('Y'))
-                    ->whereMonth('created_at', '=', date('m'))
-                    ->get();
+    // public function exportPdf()
+    // {
+    //     // Ambil data order bulanan
+    //     $orders = Order::whereYear('created_at', '=', date('Y'))
+    //                 ->whereMonth('created_at', '=', date('m'))
+    //                 ->get();
     
-        // Mendapatkan nilai bulan dan tahun saat ini
-        $month = date('F');
-        $year = date('Y');
+    //     // Mendapatkan nilai bulan dan tahun saat ini
+    //     $month = date('F');
+    //     $year = date('Y');
     
-        // Inisialisasi Dompdf dengan opsi
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isPhpEnabled', true);
+    //     // Inisialisasi Dompdf dengan opsi
+    //     $options = new Options();
+    //     $options->set('isHtml5ParserEnabled', true);
+    //     $options->set('isPhpEnabled', true);
     
-        $dompdf = new Dompdf($options);
+    //     $dompdf = new Dompdf($options);
     
-        // Muat HTML dari view dan atur ukuran kertas dan margin
-        $dompdf->loadHtml(view('pages.order.monthly-order-pdf', compact('orders', 'month', 'year')));
-        $dompdf->setPaper('A4', 'potrait'); // Atur ukuran kertas menjadi A4 (landscape)
+    //     // Muat HTML dari view dan atur ukuran kertas dan margin
+    //     $dompdf->loadHtml(view('pages.order.monthly-order-pdf', compact('orders', 'month', 'year')));
+    //     $dompdf->setPaper('A4', 'potrait'); // Atur ukuran kertas menjadi A4 (landscape)
     
-        // Render PDF
-        $dompdf->render();
+    //     // Render PDF
+    //     $dompdf->render();
     
-        // Kembalikan PDF kepada pengguna
-        return $dompdf->stream('laporan_bulan_' . $month . '.pdf');
-    }    
+    //     // Kembalikan PDF kepada pengguna
+    //     return $dompdf->stream('laporan_bulan_' . $month . '.pdf');
+
+    //     // // Render PDF
+    //     // $dompdf->render();
+    
+    //     // // Ambil konten PDF dalam bentuk string
+    //     // $pdfContent = $dompdf->output();
+    
+    //     // // Kembalikan PDF sebagai respons HTTP
+    //     // return response($pdfContent)
+    //     //             ->header('Content-Type', 'application/pdf')
+    //     //             ->header('Content-Disposition', 'inline; filename="laporan_bulan_' . $month . '.pdf"');
+    // }    
+
+    public function exportPdf(Request $request)
+        {
+            $year = $request->query('year', date('Y'));
+            $month = $request->query('month', date('m'));
+
+            // Ambil data order sesuai dengan tahun dan bulan yang dipilih
+            $orders = Order::whereYear('created_at', '=', $year)
+                        ->whereMonth('created_at', '=', $month)
+                        ->get();
+
+            // Inisialisasi Dompdf dengan opsi
+            $options = new Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isPhpEnabled', true);
+
+            $dompdf = new Dompdf($options);
+
+            // Muat HTML dari view dan atur ukuran kertas dan margin
+            $dompdf->loadHtml(view('pages.order.monthly-order-pdf', compact('orders', 'month', 'year')));
+            $dompdf->setPaper('A4', 'potrait'); // Atur ukuran kertas menjadi A4 (landscape)
+
+            // Render PDF
+            $dompdf->render();
+
+            // Kembalikan PDF kepada pengguna
+            return $dompdf->stream('laporan_bulan_' . $month . '_' . $year . '.pdf');
+        }
+
     
 }

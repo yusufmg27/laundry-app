@@ -23,9 +23,26 @@
                     @if(Auth::user()->role == 'admin' || Auth::user()->role == 'petugas')
                     <a href="{{ route('create.order') }}" class="btn btn-primary text-white font-bold px-4 rounded mt-2">Buat Order</a>
                     @endif
-                    <div>
+                    {{-- <div>
                         <a href="{{ route('order.export.pdf') }}" class="btn btn-danger text-white font-bold px-4 rounded mt-2">Export Laporan</a>
-                    </div>
+                    </div> --}}              
+                    <div>
+                        <form action="{{ route('order.export.pdf') }}" method="GET">
+                            <label for="month">Pilih Bulan:</label>
+                            <select name="month" id="month">
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}" @if ($i == $month) selected @endif>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                                @endfor
+                            </select>
+                            <label for="year">Pilih Tahun:</label>
+                            <select name="year" id="year">
+                                @for ($i = date('Y'); $i >= 2020; $i--)
+                                    <option value="{{ $i }}" @if ($i == $year) selected @endif>{{ $i }}</option>
+                                @endfor
+                            </select>
+                            <button type="submit" class="btn btn-danger bg-danger text-white font-bold px-4 rounded">Export</button>
+                        </form>
+                    </div>                    
                 </div>                
                 <div class="table-responsive">
                     <div class="container mt-1 mb-4">

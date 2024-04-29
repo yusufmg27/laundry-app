@@ -7,12 +7,14 @@
         table {
             width: 100%; /* Mengatur lebar tabel menjadi 100% dari lebar kontainer */
             border-collapse: collapse; /* Menggabungkan batas sel */
+            border: 1px solid black;
         }
 
         th, td {
             padding: 8px; /* Mengatur padding untuk sel */
             text-align: left; /* Mengatur teks menjadi rata kiri */
             border-bottom: 1px solid #ddd; /* Menambahkan garis bawah pada sel */
+            border: 1px solid black;
         }
 
         th {
@@ -26,7 +28,13 @@
 </head>
 <body>
     <h1>Laporan Order Bulanan</h1>
-    <h2>Bulan: {{ $month }}</h2>
+    <h2>Bulan: 
+        <?php
+        // Mengonversi angka bulan menjadi nama bulan
+        $monthName = date('F', mktime(0, 0, 0, $month, 1));
+        echo $monthName;
+        ?>
+    </h2>
     <h2>Tahun: {{ $year }}</h2>
 
     <table>
